@@ -1,0 +1,1 @@
+org.eposoft.jccd.preprocessors.java.RemovePackageInformation

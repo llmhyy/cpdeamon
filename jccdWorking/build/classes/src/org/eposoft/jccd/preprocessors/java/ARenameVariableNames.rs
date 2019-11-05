@@ -1,0 +1,2 @@
+org.eposoft.jccd.preprocessors.java.ARenameVariableNames
+org.eposoft.jccd.preprocessors.java.ARenameVariableNames$VariableIdentifier
