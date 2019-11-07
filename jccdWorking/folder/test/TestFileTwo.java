@@ -5,12 +5,12 @@ public class TestFileTwo {
         if (n == 0) {
             return 1;
         } else {
-            return n * factorial(n - 1);
+                                 return n * factorial(n - 1);
         }
     }
 
     public int gcdTwo(int c, int d) {
-        while (d != 0) {
+                                                  while (d != 0) {
             if (c > d) {
                 c = c - d;
             } else {

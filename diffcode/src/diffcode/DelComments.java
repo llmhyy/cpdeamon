@@ -20,25 +20,25 @@ public class DelComments {
 
 	private static final char NEWLINE = '\n';
 
-	// ÒıºÅ
+	// å¼•å·
 	private static final int TYPE_MARK = 1;
 
-	// Ğ±¸Ü
+	// æ–œæ 
 	private static final int TYPE_SLASH = 2;
 
-	// ·´Ğ±¸Ü
+	// åæ–œæ 
 	private static final int TYPE_BACKSLASH = 3;
 
-	// ĞÇºÅ
+	// æ˜Ÿå·
 	private static final int TYPE_STAR = 4;
 
-	// Ë«Ğ±¸ÜÀàĞÍµÄ×¢ÊÍ
+	// åŒæ–œæ ç±»å‹çš„æ³¨é‡Š
 	private static final int TYPE_DSLASH = 5;
-	// Ğ±¸ÜĞÇ
+	// æ–œæ æ˜Ÿ
 	private static final int TYPE_SLASH_STAR = 6;
 
 	/**
-	 * É¾³ıchar[]Êı×éÖĞ_startÎ»ÖÃµ½_endÎ»ÖÃµÄÔªËØ
+	 * åˆ é™¤char[]æ•°ç»„ä¸­_startä½ç½®åˆ°_endä½ç½®çš„å…ƒç´ 
 	 * 
 	 * @param _target
 	 * @param _start
@@ -54,7 +54,7 @@ public class DelComments {
 	}
 
 	/**
-	 * É¾³ı´úÂëÖĞµÄ×¢ÊÍ
+	 * åˆ é™¤ä»£ç ä¸­çš„æ³¨é‡Š
 	 * 
 	 * @param _target
 	 * @return
@@ -64,29 +64,29 @@ public class DelComments {
 		boolean flag = false;
 		boolean flag2 = false;
 		int mark = -1, cur = -1, token = -1;
-		// ÊäÈë×Ö·û´®
+		// è¾“å…¥å­—ç¬¦ä¸²
 		char[] input = _target.toCharArray();
 		for (cur = 0; cur < input.length; cur++) {
 			if (input[cur] == MARK && !flag && !flag2) {
-				// Ê×ÏÈÅĞ¶ÏÊÇ·ñÎª×ªÒåÒıºÅ
+				// é¦–å…ˆåˆ¤æ–­æ˜¯å¦ä¸ºè½¬ä¹‰å¼•å·
 				if (preType == TYPE_BACKSLASH)
 					continue;
-				// ÒÑ¾­½øÈëÒıºÅÖ®ÄÚ
+				// å·²ç»è¿›å…¥å¼•å·ä¹‹å†…
 				if (mark > 0) {
-					// ÒıºÅ½áÊø
+					// å¼•å·ç»“æŸ
 					mark = -1;
 				} else {
 					mark = cur;
 				}
 				preType = TYPE_MARK;
 			} else if (input[cur] == SLASH && !flag2) {
-				// µ±Ç°Î»ÖÃ´¦ÓÚÒıºÅÖ®ÖĞ
+				// å½“å‰ä½ç½®å¤„äºå¼•å·ä¹‹ä¸­
 				if (mark > 0 && !flag)
 					continue;
-				// Èç¹ûÇ°Ò»Î»ÊÇ*£¬Ôò½øĞĞÉ¾³ı²Ù×÷
+				// å¦‚æœå‰ä¸€ä½æ˜¯*ï¼Œåˆ™è¿›è¡Œåˆ é™¤æ“ä½œ
 				if (preType == TYPE_STAR) {
 					input = del(input, token, cur);
-					// ÍË»ØÒ»¸öÎ»ÖÃ½øĞĞ´¦Àí
+					// é€€å›ä¸€ä¸ªä½ç½®è¿›è¡Œå¤„ç†
 					cur = token - 1;
 					preType = 0;
 					flag = false;
@@ -100,10 +100,10 @@ public class DelComments {
 			} else if (input[cur] == BACKSLASH && !flag && !flag2) {
 				preType = TYPE_BACKSLASH;
 			} else if (input[cur] == STAR && !flag2) {
-				// µ±Ç°Î»ÖÃ´¦ÓÚÒıºÅÖ®ÖĞ
+				// å½“å‰ä½ç½®å¤„äºå¼•å·ä¹‹ä¸­
 				if (mark > 0 && !flag)
 					continue;
-				// Èç¹ûÇ°Ò»¸öÎ»ÖÃÊÇ/,Ôò¼ÇÂ¼×¢ÊÍ¿ªÊ¼µÄÎ»ÖÃ
+				// å¦‚æœå‰ä¸€ä¸ªä½ç½®æ˜¯/,åˆ™è®°å½•æ³¨é‡Šå¼€å§‹çš„ä½ç½®
 				if (preType == TYPE_SLASH && !flag) {
 					token = cur - 1;
 					preType = 0;
@@ -113,7 +113,7 @@ public class DelComments {
 			} else if (input[cur] == NEWLINE) {
 				if (preType == TYPE_DSLASH || flag2) {
 					input = del(input, token, cur - 1);
-					// ÍË»ØÒ»¸öÎ»ÖÃ½øĞĞ´¦Àí
+					// é€€å›ä¸€ä¸ªä½ç½®è¿›è¡Œå¤„ç†
 					cur = token - 1;
 					flag2 = false;
 				}
@@ -122,5 +122,5 @@ public class DelComments {
 				preType = 0;
 		}
 		return new String(input);
-        }
+	}
 }

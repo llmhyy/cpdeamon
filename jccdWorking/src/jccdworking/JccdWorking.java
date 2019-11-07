@@ -43,14 +43,16 @@ import untils.JavaFiles;
  */
 public class JccdWorking {
 
-    final static double sameScore = 1.0;
+    final static float sameScore = 1.0f;
+    final static String JAVAFILE_DIRECTORY_STRING = "C:\\Users\\Administrator\\Documents\\NetBeansProjects\\diffcode\\src\\test";
+    final static String OUTPUTFILE_STRING = "D:\\clonepair\\incubator.txt";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
 
-        File[] copyFiles = JavaFiles.getJavaFilesArray("D:\\database\\maven-master");
+        File[] copyFiles = JavaFiles.getJavaFilesArray(JAVAFILE_DIRECTORY_STRING);
         JCCDFile[] jccdFiles = new JCCDFile[copyFiles.length];
         System.out.println("当前需要处理的任务" + "_" + copyFiles.length);
         for (int i = 0; i < copyFiles.length; i++) {
@@ -61,23 +63,22 @@ public class JccdWorking {
         }
         APipeline detector = new ASTDetector();
         detector.setSourceFiles(jccdFiles);
-        detector.addOperator(new GeneralizeMethodDeclarationNames());//消除方法名称
+        detector.addOperator(new GeneralizeArrayInitializers());
+        detector.addOperator(new GeneralizeMethodCallNames());
+//        detector.addOperator(new GeneralizeMethodDeclarationNames());//消除方法名称
         detector.addOperator(new GeneralizeVariableNames());//移除变量名
         detector.addOperator(new CompleteToBlock());//补全if else
         detector.addOperator(new GeneralizeMethodArgumentTypes());//删除方方法参数类型
         detector.addOperator(new GeneralizeMethodReturnTypes()); //删除方法的返回类型
         detector.addOperator(new GeneralizeVariableDeclarationTypes());//移除变量声明类型
-        detector.addOperator(new GeneralizeClassDeclarationNames());//移除类名
-        detector.addOperator(new NumberLiteralToDouble());//忽略数字的表示97.0=97f=a
-        detector.addOperator(new AcceptFileNames());//忽略文件名
-        detector.addOperator(new CollapseCastExpressions());//移除强类型转换
-        detector.addOperator(new AcceptNumberTypeNames());//移除数字类型
-        detector.addOperator(new AcceptStringLiterals());//移除魔法文本
-        detector.addOperator(new RemoveEmptyMethods());//移除接口声明，空方法
-        //移除getset is
-        detector.addOperator(new RemoveGetMethodDeclarations());
-        detector.addOperator(new RemoveIsMethodDeclarations());
-        detector.addOperator(new RemoveSetMethodDeclarations());
+//        detector.addOperator(new GeneralizeClassDeclarationNames());//移除类名
+//        detector.addOperator(new NumberLiteralToDouble());//忽略数字的表示97.0=97f=a
+//        detector.addOperator(new AcceptFileNames());//忽略文件名
+//       detector.addOperator(new CollapseCastExpressions());//移除强类型转换
+//        detector.addOperator(new AcceptNumberTypeNames());//移除数字类型
+//        detector.addOperator(new AcceptStringLiterals());//移除魔法文本
+//        detector.addOperator(new RemoveEmptyMethods());//移除接口声明，空方法
+
         jCCDWork(detector.process());
 
     }
@@ -94,13 +95,13 @@ public class JccdWorking {
         }
         FileReaderUntil fileReader = new FileReaderUntil();
         try {
-            File file = new File("D:\\clonepair\\clone.txt");
+            File file = new File(OUTPUTFILE_STRING);
             if (!file.exists()) {
                 file.createNewFile();
             }
+            int num=0;
             OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(file), "gbk");
             BufferedWriter out = new BufferedWriter(write);
-
             if ((null != simGroups) && (0 < simGroups.length)) {
                 for (int i = 0; i < simGroups.length; i++) {
                     List<SimilarityInstance> groupList = new ArrayList<>();
@@ -129,22 +130,28 @@ public class JccdWorking {
                             SimilarityInstance kInstance = groupList.get(k);
                             String jCode = fileReader.getFileCode(new File(jInstance.getFileName()), jInstance.getStartPos(), jInstance.getStopPos());
                             String kCode = fileReader.getFileCode(new File(kInstance.getFileName()), kInstance.getStartPos(), kInstance.getStopPos());
-                            if (sameScore != diff.getSimilarity(jCode, false, kCode, false)) {
-                                out.write(jInstance.getFileName());
-                                out.write("\t");
-                                out.write(String.valueOf(jInstance.getStartPos()));
-                                out.write("\t");
-                                out.write(String.valueOf(jInstance.getStopPos()));
-                                out.write("\n");
-                                out.write(kInstance.getFileName());
-                                out.write("\t");
-                                out.write(String.valueOf((int) kInstance.getStartPos()));
-                                out.write("\t");
-                                out.write(String.valueOf((int) kInstance.getStopPos()));
-                                out.write("\n");
-                                out.write("========================");
-                                out.write("\n");
+                            if (jInstance.getStopPos() - jInstance.getStartPos() >= 4 && kInstance.getStopPos()-kInstance.getStartPos()>=4) {
+                                if (sameScore != diff.getSimilarity(jCode, false, kCode, false)) {
+                                //过滤行数小的
+                                    out.write(jInstance.getFileName());
+                                    out.write("\t");
+                                    out.write(String.valueOf(jInstance.getStartPos()));
+                                    out.write("\t");
+                                    out.write(String.valueOf(jInstance.getStopPos()));
+                                    out.write("\n");
+                                    out.write(kInstance.getFileName());
+                                    out.write("\t");
+                                    out.write(String.valueOf((int) kInstance.getStartPos()));
+                                    out.write("\t");
+                                    out.write(String.valueOf((int) kInstance.getStopPos()));
+                                    out.write("\n");
+                                    out.write("========================");
+                                    out.write("\n");
+                                    
+                                }
+                                // System.out.println(++num);
                             }
+                           
                         }
                     }
                 }
@@ -155,5 +162,19 @@ public class JccdWorking {
         } catch (Exception e) {
         }
 
+    }
+
+    //求阶乘法
+    public static int doFactorial(int n) {
+        if (n < 0) {
+            return -1;//传入的数据不合法
+        }
+        if (n == 0) {
+            return 1;
+        } else if (n == 1) {//递归结束的条件
+            return 1;
+        } else {
+            return n * doFactorial(n - 1);
+        }
     }
 }
