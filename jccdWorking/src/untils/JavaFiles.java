@@ -18,7 +18,7 @@ import java.util.List;
 public class JavaFiles {
 
     public static void main(String[] args) {
-        getJavaFilesPathArray("D:\\database\\maven-master\\maven-artifact\\src\\main\\java\\org\\apache\\maven");
+        getJavaFilesPathArray("D:\\BaiduNetdiskDownload\\camel-master\\");
     }
     public static String[] getJavaFilesPathArray(String path) {
         int fileNum = 0, folderNum = 0;
@@ -50,6 +50,7 @@ public class JavaFiles {
             }
         } else {
         }
+        System.out.println(fileNum);
         String [] javaFiles=javaFilesPath.toArray(new String[0]);
         return javaFiles;       
     }

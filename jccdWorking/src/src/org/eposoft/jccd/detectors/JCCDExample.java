@@ -100,7 +100,6 @@ public class JCCDExample {
         File file = new File("springp");
         File[] copyFiles = file.listFiles();
         JCCDFile[] files = new JCCDFile[copyFiles.length];
-        System.out.println("当前需要处理的任务" + "_" + copyFiles.length);
         for (int i = 0; i < copyFiles.length; i++) {
             File file1 = copyFiles[i];
             if (file1.isFile()) {

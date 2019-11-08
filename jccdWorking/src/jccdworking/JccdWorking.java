@@ -44,14 +44,17 @@ import untils.JavaFiles;
 public class JccdWorking {
 
     final static float sameScore = 1.0f;
-    final static String JAVAFILE_DIRECTORY_STRING = "C:\\Users\\Administrator\\Documents\\NetBeansProjects\\diffcode\\src\\test";
-    final static String OUTPUTFILE_STRING = "D:\\clonepair\\incubator.txt";
+     static String JAVAFILE_DIRECTORY_STRING = "D:\\BaiduNetdiskDownload\\camel-master\\";
+     static String OUTPUTFILE_STRING = "D:\\clonepair\\camel.txt";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-
+        if(args.length>0){
+            JAVAFILE_DIRECTORY_STRING=args[0];
+            OUTPUTFILE_STRING=args[1];
+        }
         File[] copyFiles = JavaFiles.getJavaFilesArray(JAVAFILE_DIRECTORY_STRING);
         JCCDFile[] jccdFiles = new JCCDFile[copyFiles.length];
         System.out.println("当前需要处理的任务" + "_" + copyFiles.length);
@@ -130,7 +133,7 @@ public class JccdWorking {
                             SimilarityInstance kInstance = groupList.get(k);
                             String jCode = fileReader.getFileCode(new File(jInstance.getFileName()), jInstance.getStartPos(), jInstance.getStopPos());
                             String kCode = fileReader.getFileCode(new File(kInstance.getFileName()), kInstance.getStartPos(), kInstance.getStopPos());
-                            if (jInstance.getStopPos() - jInstance.getStartPos() >= 4 && kInstance.getStopPos()-kInstance.getStartPos()>=4) {
+                            if (jInstance.getStopPos() - jInstance.getStartPos() >= 5 && kInstance.getStopPos()-kInstance.getStartPos()>=5) {
                                 if (sameScore != diff.getSimilarity(jCode, false, kCode, false)) {
                                 //过滤行数小的
                                     out.write(jInstance.getFileName());
@@ -146,8 +149,7 @@ public class JccdWorking {
                                     out.write(String.valueOf((int) kInstance.getStopPos()));
                                     out.write("\n");
                                     out.write("========================");
-                                    out.write("\n");
-                                    
+                                    out.write("\n");                                   
                                 }
                                 // System.out.println(++num);
                             }
