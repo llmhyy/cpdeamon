@@ -97,8 +97,8 @@ public class Diffcode {
         }
         diffLines = map1.size() + map2.size();
         sameLines = list1.size() + list2.size() - diffLines;
-        float similarity = sameLines
-                / ((float) diffLines + (float) sameLines);
+        double similarity = sameLines
+                / ((double) diffLines + (double) sameLines);
         System.out.println(similarity);
         /* System.out.println(diffLines+"\n"+sameLines+"\n"+similarity); */
         return similarity;
@@ -111,7 +111,7 @@ public class Diffcode {
         code = DelComments.delComments(buf.toString());
         code=code.replaceAll("\r\n|\r|\n|\\s*", "");
         System.out.println(code);
-        //删除变量名��
+        //删除变量名
 //            // System.out.println(code);
 //            int pos1 = 0, pos2 = 0;
 //            int len = code.length();
