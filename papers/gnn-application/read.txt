@@ -1,1 +1,3 @@
 gnn application papers list
+A Comprehensive Survey on Graph Neural Networks
+Learning to present programs with graphs
