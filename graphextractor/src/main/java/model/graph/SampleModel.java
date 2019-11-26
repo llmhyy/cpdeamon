@@ -6,17 +6,25 @@ public class SampleModel {
 	int slotTokenIdx;
 	ContextGraphModel ContextGraph;
 	final int SlotDummyNode = 0;
-	SymbolCandidatesModel SymbolCandidates;
-	
+	SymbolCandidateModel[] SymbolCandidates;
+    
+	public SampleModel() {
+		
+	}
+	public SampleModel(String filename,int slotTokenIdx,ContextGraphModel ContextGraph,SymbolCandidateModel[] SymbolCandidates) {
+    this.filename=filename;
+    this.slotTokenIdx=slotTokenIdx;
+    this.ContextGraph=ContextGraph;
+    this.SymbolCandidates=SymbolCandidates;
+	}
 
-	public SymbolCandidatesModel getSymbolCandidates() {
+
+	public SymbolCandidateModel[] getSymbolCandidates() {
 		return SymbolCandidates;
 	}
-
-	public void setSymbolCandidates(SymbolCandidatesModel symbolCandidates) {
+	public void setSymbolCandidates(SymbolCandidateModel[] symbolCandidates) {
 		SymbolCandidates = symbolCandidates;
 	}
-
 	public String getFilename() {
 		return filename;
 	}

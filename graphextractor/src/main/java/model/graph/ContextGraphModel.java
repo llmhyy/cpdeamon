@@ -8,6 +8,21 @@ public class ContextGraphModel {
 	EdgesModel Edges;
 	Map<Integer, String> NodeLabels;
 	Map<Integer, String> NodeTypes;
+    /**
+     * a constructor
+     * @param Edges
+     * @param NodeLabels
+     * @param NodeTypes
+     */
+	public ContextGraphModel(EdgesModel edges,Map<Integer, String> nodeLabels,Map<Integer, String> nodeTypes) {
+     this.Edges=edges;
+     this.NodeLabels=nodeLabels;
+     this.NodeTypes=nodeTypes;  
+	}
+
+	public ContextGraphModel() {
+
+	}
 
 	public EdgesModel getEdges() {
 		return Edges;
@@ -18,8 +33,8 @@ public class ContextGraphModel {
 	}
 
 	public Map<Integer, String> getNodeLabels() {
-		if(NodeTypes==null) {
-			this.NodeTypes=new HashMap<>();
+		if (NodeTypes == null) {
+			this.NodeTypes = new HashMap<>();
 		}
 		return NodeLabels;
 	}
@@ -29,8 +44,8 @@ public class ContextGraphModel {
 	}
 
 	public Map<Integer, String> getNodeTypes() {
-		if(NodeLabels==null) {
-			this.NodeLabels=new HashMap<Integer, String>();
+		if (NodeLabels == null) {
+			this.NodeLabels = new HashMap<Integer, String>();
 		}
 		return NodeTypes;
 	}
@@ -38,5 +53,5 @@ public class ContextGraphModel {
 	public void setNodeTypes(Map<Integer, String> nodeTypes) {
 		NodeTypes = nodeTypes;
 	}
-	
+
 }

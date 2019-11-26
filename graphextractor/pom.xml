@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>java-graph-extra</groupId>
-	<artifactId>java-graph-extra</artifactId>
+	<groupId>graphextractor</groupId>
+	<artifactId>graphextractor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>java-graph-extra</name>
+	<name>graphextractor</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>

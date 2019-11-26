@@ -1,16 +1,21 @@
 package draw;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 import config.Config;
 import graph.extractor.GraphExtractorImp;
-import model.DataNode;
+import model.ast.DataNode;
 import model.graph.EdgesModel;
 import model.graph.SampleModel;
 import util.ASTtoDOT;
@@ -24,24 +29,26 @@ public class DrawGraph {
     	 Map<Integer, DataNode> treeMap = new HashMap<>();
 		 GraphExtractorImp graphExtractor=new GraphExtractorImp();
 		 CompilationUnit unit= graphExtractor.processJavaFile(new File(Config.SOURCEFILEPATH));
-		 graphExtractor.getBasedASTMap(unit, 0, treeMap);
+		 graphExtractor.getBasedASTMap(unit, 1, treeMap);
 		 draw.writeASTDot(treeMap);
 		 draw.writeNextEdgesDot(treeMap);
 	}
 	public void writeNextEdgesDot(Map<Integer, DataNode> treeMap) {
-		EdgesModel edgesModel = graphExtractor.extraEdges(treeMap);
-		String string = ASTtoDOT.ASTtoDotParser(extractor.extraNextEdgesforDot(edgesModel, treeMap));
+		EdgesModel edgesModel = graphExtractor.extractEdges(treeMap);
+		String string = ASTtoDOT.ASTtoDotParser(extractor.extractNextEdgesforDot(edgesModel, treeMap));
 		FileUtil.writeFile(Config.DOTFILEOUTPATH + "nexttoken.dot", string);
 	}
 
-	public void writeGraphGson(SampleModel sampleModel) {
+	public void writeGraphGson(List<SampleModel> sampleModels) {
 		Gson gson = new Gson();
-		String jsonObject = gson.toJson(sampleModel);
-		FileUtil.writeFile(Config.RESULTOUTFILEPATH, jsonObject);
+	     SampleModel[]  jsonArray = (SampleModel[]) sampleModels.toArray(new SampleModel[0]);
+	     String gsonObject=gson.toJson(jsonArray).toString();
+		FileUtil.writeFile(Config.RESULTOUTFILEPATH+Config.GRAPHFILENAME,gsonObject);
+		//FileUtil.zip(Config.RESULTOUTFILEPATH);
 	}
-
+ 
 	public void writeASTDot(Map<Integer, DataNode> treeMap) {
-		String dotString = ASTtoDOT.ASTtoDotParser(extractor.extraChildEdgesForDot(treeMap));
+		String dotString = ASTtoDOT.ASTtoDotParser(extractor.extractChildEdgesForDot(treeMap));
 		FileUtil.writeFile(Config.DOTFILEOUTPATH + "ast.dot", dotString);
 	}
 

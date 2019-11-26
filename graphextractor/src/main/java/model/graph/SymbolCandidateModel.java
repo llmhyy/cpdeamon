@@ -1,6 +1,6 @@
 package model.graph;
 
-public class SymbolCandidatesModel {
+public class SymbolCandidateModel {
 
 	int SymbolDummyNode;
 	String SymbolName;	

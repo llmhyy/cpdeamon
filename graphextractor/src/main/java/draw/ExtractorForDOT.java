@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import model.DataNode;
+import model.ast.DataNode;
 import model.graph.EdgesModel;
 
 public class ExtractorForDOT {
 	
 	//extractor edges for visual AST,e.g. a node present as Idx_nodeTYpe 
-	public List<String[]> extraChildEdgesForDot(Map<Integer, DataNode> treeMap) {
+	public List<String[]> extractChildEdgesForDot(Map<Integer, DataNode> treeMap) {
 		List<String[]> childEdgelist = new ArrayList<>();
 		for (Map.Entry<Integer, DataNode> entry : treeMap.entrySet()) {
 			int nodeId = entry.getKey();
@@ -29,8 +29,9 @@ public class ExtractorForDOT {
 		}
 		return childEdgelist;
 	}
+
 	
-	public List<String []> extraNextEdgesforDot(EdgesModel edges,Map<Integer, DataNode> treeMap) {
+	public List<String []> extractNextEdgesforDot(EdgesModel edges,Map<Integer, DataNode> treeMap) {
 		List<String []>nextTokenStringList=new ArrayList<>();
 		List<Integer []>nextTokenList=edges.getNextToken();
 		for (Integer[] Idx : nextTokenList) {

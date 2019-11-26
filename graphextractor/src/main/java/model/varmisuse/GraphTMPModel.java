@@ -9,6 +9,7 @@ public class GraphTMPModel {
 public List<Integer []> Child =new ArrayList<Integer[]>();
 public List<Integer []> NextToken =new ArrayList<>();
 public Map<Integer, String> NodeLabels =new HashMap<Integer, String>();
+public Map<Integer, String>NodeTypes=new HashMap<>();
 public List<Integer[]> getChild() {
 	return Child;
 }
@@ -20,6 +21,12 @@ public List<Integer[]> getNextToken() {
 }
 public void setNextToken(List<Integer[]> nextToken) {
 	NextToken = nextToken;
+}
+public Map<Integer, String> getNodeTypes() {
+	return NodeTypes;
+}
+public void setNodeTypes(Map<Integer, String> nodeTypes) {
+	NodeTypes = nodeTypes;
 }
 public Map<Integer, String> getNodeLabels() {
 	return NodeLabels;
