@@ -1,9 +1,14 @@
 package model.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EdgesModel {
+public class EdgesModel  implements Serializable{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3493187903408409478L;
 List<Integer []> Child;
 List<Integer []> NextToken;
 List<Integer []> LastUse;

@@ -7,7 +7,7 @@ public class Config {
 	public final static String ZIPOUTPATH = "/Users/knightsong/Desktop/";
 	public final static String GRAPHFILENAME = "graph.json";
 	// java files source
-	public final static String SOURCEFILEPATH = "/Users/knightsong/Desktop/samples/";
+	public final static String SOURCEFILEPATH = "/Users/knightsong/workspace_self/Sample/src/";
 	// sub filename mark
-	public final static String SUBIDX="samples";
+	public final static String SUBIDX="src";
 }

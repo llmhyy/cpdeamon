@@ -1,10 +1,15 @@
 package model.graph;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextGraphModel {
+public class ContextGraphModel implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4754012657509882142L;
 	EdgesModel Edges;
 	Map<Integer, String> NodeLabels;
 	Map<Integer, String> NodeTypes;
@@ -21,7 +26,7 @@ public class ContextGraphModel {
 	}
 
 	public ContextGraphModel() {
-
+       super();
 	}
 
 	public EdgesModel getEdges() {

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
 import config.Config;
-import graph.extractor.GraphExtractorImp;
+import graph.extractor.imp.GraphExtractorImp;
 import model.ast.DataNode;
 import model.graph.EdgesModel;
 import model.graph.SampleModel;

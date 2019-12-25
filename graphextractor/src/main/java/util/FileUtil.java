@@ -2,6 +2,8 @@ package util;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +11,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -106,5 +111,39 @@ public class FileUtil {
 			}
          System.out.print("gzip task end ");
 		}
+	}
+	
+	
+	//deep clone
+	public static Object deeplyCopy(Serializable obj) {
+		try {
+			return bytes2object(object2bytes(obj));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static byte[] object2bytes(Serializable obj) {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(obj);
+			oos.close();
+			baos.close();
+			return baos.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static Object bytes2object(byte[] bytes) {
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			return ois.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

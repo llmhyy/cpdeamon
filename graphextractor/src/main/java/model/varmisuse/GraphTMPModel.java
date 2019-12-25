@@ -8,10 +8,24 @@ import java.util.Map;
 public class GraphTMPModel {
 public List<Integer []> Child =new ArrayList<Integer[]>();
 public List<Integer []> NextToken =new ArrayList<>();
+public List<Integer []> LastUse =new ArrayList<>();
+public List<Integer []> LastLexicalUse =new ArrayList<>();
 public Map<Integer, String> NodeLabels =new HashMap<Integer, String>();
 public Map<Integer, String>NodeTypes=new HashMap<>();
 public List<Integer[]> getChild() {
 	return Child;
+}
+public List<Integer[]> getLastUse() {
+	return LastUse;
+}
+public void setLastUse(List<Integer[]> lastUse) {
+	LastUse = lastUse;
+}
+public List<Integer[]> getLastLexicalUse() {
+	return LastLexicalUse;
+}
+public void setLastLexicalUse(List<Integer[]> lastLexicalUse) {
+	LastLexicalUse = lastLexicalUse;
 }
 public void setChild(List<Integer[]> child) {
 	Child = child;

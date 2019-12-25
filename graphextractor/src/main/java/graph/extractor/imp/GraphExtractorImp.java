@@ -1,4 +1,4 @@
-package graph.extractor;
+package graph.extractor.imp;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.eclipse.jdt.internal.core.util.VerificationInfo;
 import org.eclipse.jface.text.Document;
 
 import graph.extractor.Interface.GraphExtractorI;
@@ -30,6 +30,7 @@ import model.graph.EdgesModel;
 import model.graph.SampleModel;
 import model.graph.SymbolCandidateModel;
 import model.intermediate.ClassCandidates;
+import util.FileUtil;
 
 public class GraphExtractorImp implements GraphExtractorI {
 	public  int ID = 1; // used for mark node serial number，0 leave to <slot>
@@ -86,7 +87,7 @@ public class GraphExtractorImp implements GraphExtractorI {
 		List<ClassCandidates> symbolCandidateModels = extractSymbolCandidates(contextGraph.getNodeTypes(),
 				contextGraph.getNodeLabels());
 		for(Iterator<ClassCandidates> iterable=symbolCandidateModels.iterator();iterable.hasNext();) {
-			ContextGraphModel contextGraph2 = extractContextGraphQuickly(treeMap);
+			ContextGraphModel contextGraph2 = (ContextGraphModel) FileUtil.deeplyCopy(contextGraph);
 			ClassCandidates classCandidates=iterable.next();
 			SymbolCandidateModel[] symbolCandidates=classCandidates.getSymbolCandidateModels();
 			int slotTokenIdx = extractSlotTokenIdx(contextGraph2.getNodeTypes());
@@ -152,6 +153,8 @@ public class GraphExtractorImp implements GraphExtractorI {
 		}
 	}
 
+	
+
 	@Override
 	public CompilationUnit processJavaFile(File file) {
 		// read Java File by relative path
@@ -164,7 +167,7 @@ public class GraphExtractorImp implements GraphExtractorI {
 		}
 		Document document = new Document(source);
 		// parse file
-		ASTParser parser = ASTParser.newParser(AST.JLS8); // define java programming specification
+		ASTParser parser = ASTParser.newParser(AST.JLS10); // define java programming specification
 		parser.setKind(ASTParser.K_COMPILATION_UNIT); // type of parser : java file
 		parser.setSource(document.get().toCharArray());// param :char or java model
 		CompilationUnit unit = (CompilationUnit) parser.createAST(null);// a point for java file
@@ -212,16 +215,16 @@ public class GraphExtractorImp implements GraphExtractorI {
 		List<Integer[]> childEdgelist = new ArrayList<>();
 		List<Integer[]> nextTokenList = new ArrayList<>();
 		List<Integer> leafNodeList = new ArrayList<>();
-		Map<String, String> variableTypes = new HashMap<>();
+		Map<Integer, String> nodeTypes = new HashMap<>();
 		Map<Integer, String> nodeLabels = new HashMap<Integer, String>();
 		//put slot in first position
 		nodeLabels.put(0, "<SLOT>");
 		// travel treeMap add edge from now node to target
-		System.out.print("ExtractContextGraph task---------------------\n");
+		System.out.println("ExtractContextGraph---------------------");
 		for (Map.Entry<Integer, DataNode> entry : treeMap.entrySet()) {
 			int nodeId = entry.getKey(); // now node label
 			DataNode dataNode = entry.getValue(); // now node
-
+			ASTNode node =dataNode.node;  
 			// 1.get Edges
 			List<Integer> childLabels = dataNode.childrenLables;// all child node of now node
 			// add all child edges from now_node to child if have
@@ -233,25 +236,24 @@ public class GraphExtractorImp implements GraphExtractorI {
 				leafNodeList.add(nodeId);
 			}
 
-			// 2.collect NodeTypes
-			// collect variableTypes by String split e.g. <a,int>
-			// e.g. int a=1; and int a; declaration type is always last but one
-			// then a=1 or a; can split by "=" or ";" we can get a which is token
-			if (dataNode.node instanceof FieldDeclaration || dataNode.node instanceof VariableDeclarationStatement
-					|| dataNode.node instanceof SingleVariableDeclaration) {
-				String[] stringArray = dataNode.node.toString().split(" ");
-				String type = stringArray[stringArray.length - 2];
-				String token;
-				String endPos = stringArray[stringArray.length - 1];
-				if (endPos.contains("=")) {
-					token = endPos.substring(0, endPos.indexOf("="));
-				} else if (endPos.contains(";")) {
-					token = endPos.substring(0, endPos.indexOf(";"));
-				} else {
-					token = endPos;
-				}
-				variableTypes.put(token, type);
+//			 2.collect NodeTypes
+			String type ="UNK";
+			if (node instanceof VariableDeclarationFragment) {
+			  ASTNode parent=node.getParent();
+			  if (parent instanceof FieldDeclaration) {
+				 type =((FieldDeclaration)parent).getType().toString();
+			}else {
+				 type =((VariableDeclarationStatement)parent).getType().toString();
 			}
+				nodeTypes.put(++nodeId,type);   
+			}
+			
+			if (node instanceof SingleVariableDeclaration) {
+				type=((SingleVariableDeclaration)node).getType().toString();
+				nodeTypes.put(nodeId+2,type);
+			}
+			
+			
 
 			// 3 collect nodeLabels that is a dictionary
 			// if non-terminal node set label equals node type
@@ -264,58 +266,30 @@ public class GraphExtractorImp implements GraphExtractorI {
 		}
 
 		// finally,get Node type and nextTokenList from leafNodeList
-		Map<Integer, String> nodeType = new HashMap<>();
-		System.out.print("NodeTypes:---------------------\n");
-		String token = treeMap.get(leafNodeList.get(0)).node.toString();
-		if (variableTypes.get(token) != null) {
-			nodeType.put(leafNodeList.get(0), variableTypes.get(token));
-			System.out.print(leafNodeList.get(0) + "_" + token + "_" + variableTypes.get(token) + "\n");
-		}
+		
 		for (int i = 0; i < leafNodeList.size() - 1; i++) {
 			// add nextToken edges
 			nextTokenList.add(new Integer[] { leafNodeList.get(i), leafNodeList.get(i + 1) });
-			// get Node type
-			int label = leafNodeList.get(i + 1);
-			String token2 = treeMap.get(label).node.toString();
-			if (variableTypes.get(token2) != null) {
-				nodeType.put(label, variableTypes.get(token2));
-			}
+	
 		}
 
 		// combine the components to get context\
-		System.out.print("set edges --------------------\n");
+		System.out.println("seting edges --------------------");
 		edges.setNextToken(nextTokenList);
 		edges.setChild(childEdgelist);
 		ContextGraphModel contextGraph = new ContextGraphModel();
 		contextGraph.setEdges(edges);
-		System.out.print("set nodeType --------------------\n");
-		contextGraph.setNodeTypes(nodeType);
-		System.out.print("set nodeLabels --------------------\n");
+		System.out.println("set nodeType --------------------");
+		contextGraph.setNodeTypes(nodeTypes);
+		System.out.println("set nodeLabels --------------------");
 		contextGraph.setNodeLabels(nodeLabels);
-		System.out.print("ExtractContextGraph task end---------\n");
+		System.out.println("ExtractContextGraph end---------");
 		return contextGraph;
 	}
 
-	public Map<String, String> extractVariableTypes(Map<Integer, DataNode> treeMap) {
+	public Map<String, String> extractVariableTypes(CompilationUnit unit) {
 		Map<String, String> variableTypes = new HashMap<>();
-		for (Map.Entry<Integer, DataNode> entry : treeMap.entrySet()) {
-			DataNode dataNode = entry.getValue();
-			if (dataNode.node instanceof FieldDeclaration || dataNode.node instanceof VariableDeclarationStatement
-					|| dataNode.node instanceof SingleVariableDeclaration) {
-				String[] stringArray = dataNode.node.toString().split(" ");
-				String type = stringArray[stringArray.length - 2];
-				String token;
-				String endPos = stringArray[stringArray.length - 1];
-				if (endPos.contains("=")) {
-					token = endPos.substring(0, endPos.indexOf("="));
-				} else if (endPos.contains(";")) {
-					token = endPos.substring(0, endPos.indexOf(";"));
-				} else {
-					token = endPos;
-				}
-				variableTypes.put(token, type);
-			}
-		}
+	    
 		return variableTypes;
 	}
 
@@ -361,6 +335,7 @@ public class GraphExtractorImp implements GraphExtractorI {
 			// random a position as the slot
 			int nodeIdx = new Random().nextInt(labelsIdx.size());
 			int node = labelsIdx.get(nodeIdx);
+			System.out.println("candidate:"+node+" label:"+nodeLabels.get(node));
 			ClassCandidates candidates=new ClassCandidates();
 			candidates.setSymbolNode(node);			
 			// this node as current candidate in slot
@@ -425,14 +400,14 @@ public class GraphExtractorImp implements GraphExtractorI {
 	public void replaceASTNodeForCandidates(ContextGraphModel contextGraph,int SymbolNode) {
 		
 		// TODO Auto-generated method stub
-		System.out.print("start repleace symbolNode");
+		System.out.println("repleace symbolNode");
 		List<Integer[]> childEdges=contextGraph.getEdges().getChild();
 		//replace child node
 		for (Iterator<Integer[]> iterator = childEdges.iterator(); iterator.hasNext();) {
 			Integer[] edges =iterator.next();
 			for (int i = 0; i < edges.length; i++) {
 				if (edges[i]==SymbolNode) {
-					System.out.print("replace child");
+					System.out.println("replace child");
 					edges[i]=0;
 				}
 			}
@@ -444,7 +419,7 @@ public class GraphExtractorImp implements GraphExtractorI {
 			Integer[] edges = (Integer[]) iterator.next();
 			for (int i = 0; i < edges.length; i++) {
 				if (edges[i]==SymbolNode) {
-					System.out.print("replace nextToken");
+					System.out.println("replace nextToken");
 					edges[i]=0;
 				}
 			}
